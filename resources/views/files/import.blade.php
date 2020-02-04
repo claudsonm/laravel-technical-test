@@ -8,6 +8,8 @@
                     <div class="card-header">{{ __('Import a new file') }}</div>
 
                     <div class="card-body">
+                        @include('flash::message')
+
                         <form method="POST" action="{{ route('file.import') }}" enctype="multipart/form-data">
                             @csrf
 
