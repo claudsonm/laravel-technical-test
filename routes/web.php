@@ -12,8 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('files/new');
 });
+
+Route::get('files/new', 'ImportFilesController@create');
+Route::post('files', 'ImportFilesController@store')->name('file.import');
 
 Auth::routes();
 
