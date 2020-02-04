@@ -26,55 +26,25 @@ class ImportFilesController extends Controller
     public function store(ImportFilesRequest $request)
     {
         $file = $request->file('document');
-        $xml = simplexml_load_string(file_get_contents($file), "SimpleXMLElement", LIBXML_NOCDATA);
-        $json = json_encode($xml);
-        $array = json_decode($json,TRUE);
+        $array = $this->getXmlAsArray($file);
 
         return $array;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $file
+     * @return array
      */
-    public function edit($id)
+    protected function getXmlAsArray($file) : array
     {
-        //
-    }
+        $xml = simplexml_load_string(file_get_contents($file), "SimpleXMLElement", LIBXML_NOCDATA);
+        $json = json_encode($xml);
+        $array = json_decode($json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            abort(406, 'We could not parse the given file.');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $array;
     }
 }
