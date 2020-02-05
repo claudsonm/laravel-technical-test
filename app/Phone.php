@@ -12,4 +12,11 @@ class Phone extends Model
      * @var array
      */
     protected $fillable = ['number'];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = ['person_id'];
 }

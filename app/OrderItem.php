@@ -14,6 +14,16 @@ class OrderItem extends Model
     protected $guarded = [];
 
     /**
+     * Get the order related to the item.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    /**
      * Set the item price in cents.
      *
      * @param  string  $value
@@ -22,5 +32,15 @@ class OrderItem extends Model
     public function setPriceAttribute($value)
     {
         $this->attributes['price'] = is_float($value) ? $value * 100 : $value;
+    }
+
+    /**
+     * Get the item price as float.
+     *
+     * @return float|int
+     */
+    public function getFloatPriceAttribute()
+    {
+        return $this->price / 100;
     }
 }

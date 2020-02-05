@@ -9,12 +9,23 @@ use Illuminate\Http\Request;
 class PersonController extends Controller
 {
     /**
-     * Get a list of all users paginated.
+     * Display a listing of persons.
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function index()
     {
-        return Person::paginate();
+        return Person::with('phones')->paginate();
+    }
+
+    /**
+     * Display the specified person.
+     *
+     * @param  Person  $person
+     * @return Person
+     */
+    public function show(Person $person)
+    {
+        return $person->load('phones');
     }
 }

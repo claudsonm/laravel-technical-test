@@ -32,7 +32,7 @@ class PersonTest extends TestCase
     }
 
     /** @test */
-    public function other_pages_can_be_accessed_using_query_parameters()
+    public function more_persons_can_be_retrieved_using_query_parameters()
     {
         $this->signInAsClient();
         $persons = create(Person::class, [],20);
@@ -43,5 +43,35 @@ class PersonTest extends TestCase
             ->assertJsonFragment(['current_page' => 2])
             ->assertJsonFragment(['name' => $persons->last()->name])
             ->assertDontSee($persons->first()->name);
+    }
+
+    /** @test */
+    public function only_authorized_requests_are_allowed_to_get_a_person_data()
+    {
+        create(Person::class);
+        $this->getJson('api/persons/1')
+            ->assertStatus(401)
+            ->assertExactJson(['message' => 'Unauthenticated.']);
+    }
+
+    /** @test */
+    public function it_can_display_the_data_of_a_single_person()
+    {
+        $this->signInAsClient();
+        $person = create(Person::class);
+
+        $this->getJson('api/persons/1')
+            ->assertSuccessful()
+            ->assertJsonFragment(['name' => $person->name]);
+    }
+
+    /** @test */
+    public function an_error_is_thrown_when_trying_to_get_data_of_non_existing_person()
+    {
+        $this->signInAsClient();
+
+        $this->getJson('api/persons/41')
+            ->assertNotFound()
+            ->assertExactJson(['message' => 'No results for the given resource.']);
     }
 }

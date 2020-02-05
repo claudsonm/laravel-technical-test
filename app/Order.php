@@ -22,4 +22,14 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Get the person related to the order.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function person()
+    {
+        return $this->belongsTo(Person::class);
+    }
 }
