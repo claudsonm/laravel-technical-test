@@ -19,4 +19,14 @@ class Phone extends Model
      * @var array
      */
     protected $hidden = ['person_id'];
+
+    /**
+     * Get the phone owner.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function person()
+    {
+        return $this->belongsTo(Person::class);
+    }
 }

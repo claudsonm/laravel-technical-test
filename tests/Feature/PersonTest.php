@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Phone;
 use App\Person;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -26,7 +27,7 @@ class PersonTest extends TestCase
 
         $this->getJson('api/persons')
             ->assertSuccessful()
-            ->assertJsonStructure(['current_page', 'data', 'total'])
+            ->assertJsonStructure(['data', 'links', 'meta'])
             ->assertJsonFragment(['name' => $persons->first()->name])
             ->assertDontSee($persons->last()->name);
     }
@@ -39,7 +40,7 @@ class PersonTest extends TestCase
 
         $this->getJson('api/persons?page=2')
             ->assertSuccessful()
-            ->assertJsonStructure(['current_page', 'data', 'total'])
+            ->assertJsonStructure(['data', 'links', 'meta'])
             ->assertJsonFragment(['current_page' => 2])
             ->assertJsonFragment(['name' => $persons->last()->name])
             ->assertDontSee($persons->first()->name);
@@ -58,7 +59,7 @@ class PersonTest extends TestCase
     public function it_can_display_the_data_of_a_single_person()
     {
         $this->signInAsClient();
-        $person = create(Person::class);
+        $person = create(Phone::class)->person;
 
         $this->getJson('api/persons/1')
             ->assertSuccessful()

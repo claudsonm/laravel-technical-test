@@ -5,27 +5,28 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Person;
 use Illuminate\Http\Request;
+use App\Http\Resources\PersonResource;
 
 class PersonController extends Controller
 {
     /**
      * Display a listing of persons.
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
-        return Person::with('phones')->paginate();
+        return PersonResource::collection(Person::with('phones')->paginate());
     }
 
     /**
      * Display the specified person.
      *
      * @param  Person  $person
-     * @return Person
+     * @return PersonResource
      */
     public function show(Person $person)
     {
-        return $person->load('phones');
+        return PersonResource::make($person->load('phones'));
     }
 }
