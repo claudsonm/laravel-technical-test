@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Phone;
 use App\Person;
+use App\Phone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class PersonTest extends TestCase
     public function a_list_of_persons_can_be_retrieved()
     {
         $this->signInAsClient();
-        $persons = create(Person::class, [],20);
+        $persons = create(Person::class, [], 20);
 
         $this->getJson('api/persons')
             ->assertSuccessful()
@@ -36,7 +36,7 @@ class PersonTest extends TestCase
     public function more_persons_can_be_retrieved_using_query_parameters()
     {
         $this->signInAsClient();
-        $persons = create(Person::class, [],20);
+        $persons = create(Person::class, [], 20);
 
         $this->getJson('api/persons?page=2')
             ->assertSuccessful()

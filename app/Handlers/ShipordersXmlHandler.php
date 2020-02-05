@@ -3,7 +3,6 @@
 namespace App\Handlers;
 
 use App\Order;
-use Illuminate\Support\Arr;
 
 class ShipordersXmlHandler extends Handler
 {

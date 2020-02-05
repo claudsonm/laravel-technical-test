@@ -22,7 +22,7 @@ class OrderTest extends TestCase
     public function a_list_of_orders_can_be_retrieved()
     {
         $this->signInAsClient();
-        $orders = create(Order::class, [],20);
+        $orders = create(Order::class, [], 20);
 
         $this->getJson('api/orders')
             ->assertSuccessful()
@@ -35,7 +35,7 @@ class OrderTest extends TestCase
     public function more_orders_can_be_retrieved_using_query_parameters()
     {
         $this->signInAsClient();
-        $orders = create(Order::class, [],20);
+        $orders = create(Order::class, [], 20);
 
         $this->getJson('api/orders?page=2')
             ->assertSuccessful()

@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Phone;
 use App\Order;
 use App\Person;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use App\Phone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ImportFileTest extends TestCase
@@ -37,7 +35,7 @@ class ImportFileTest extends TestCase
 
         $this->post('files', ['document' => $unrecognizedXml])
             ->assertSessionHas('flash_notification.0.level', 'danger')
-            ->assertSessionHas('flash_notification.0.message', "There are no handlers for the given file.");
+            ->assertSessionHas('flash_notification.0.message', 'There are no handlers for the given file.');
     }
 
     /** @test */
@@ -55,7 +53,7 @@ class ImportFileTest extends TestCase
     {
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'success')
-            ->assertSessionHas('flash_notification.0.message', "File processed: 3 new persons imported and 0 persons with error.");
+            ->assertSessionHas('flash_notification.0.message', 'File processed: 3 new persons imported and 0 persons with error.');
 
         $this->assertEquals(3, Person::count());
         $this->assertDatabaseHas('persons', ['id' => 1, 'name' => 'Name 1']);
@@ -75,7 +73,7 @@ class ImportFileTest extends TestCase
 
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'warning')
-            ->assertSessionHas('flash_notification.0.message', "File processed: 0 new persons imported and 3 persons with error.");
+            ->assertSessionHas('flash_notification.0.message', 'File processed: 0 new persons imported and 3 persons with error.');
         $this->assertEquals(3, Person::count());
         $this->assertEquals(5, Phone::count());
     }
@@ -86,7 +84,7 @@ class ImportFileTest extends TestCase
         create(Person::class, [], 3);
         $this->performOrdersFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'success')
-            ->assertSessionHas('flash_notification.0.message', "File processed: 3 new orders imported and 0 orders with errors.");
+            ->assertSessionHas('flash_notification.0.message', 'File processed: 3 new orders imported and 0 orders with errors.');
 
         $this->assertDatabaseHas('orders', ['id' => 1, 'destination' => 'Name 1', 'person_id' => 1]);
         $this->assertDatabaseHas('orders', ['id' => 2, 'destination' => 'Name 2', 'person_id' => 2]);
@@ -96,9 +94,6 @@ class ImportFileTest extends TestCase
         $this->assertEquals(2, Order::find(3)->items()->count());
     }
 
-    /**
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
     protected function performPersonFileUpload(): \Illuminate\Foundation\Testing\TestResponse
     {
         $people = $this->makeDummyUploadedFileFrom('people.xml');
@@ -106,9 +101,6 @@ class ImportFileTest extends TestCase
         return $this->post('files', ['document' => $people]);
     }
 
-    /**
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
     protected function performOrdersFileUpload(): \Illuminate\Foundation\Testing\TestResponse
     {
         $orders = $this->makeDummyUploadedFileFrom('shiporders.xml');
@@ -117,13 +109,12 @@ class ImportFileTest extends TestCase
     }
 
     /**
-     * @param  string  $file The filename located at resources/fixtures folder.
-     * @return \Illuminate\Http\Testing\File
+     * @param string $file the filename located at resources/fixtures folder
      */
     protected function makeDummyUploadedFileFrom(string $file): \Illuminate\Http\Testing\File
     {
-        $content = file_get_contents(resource_path("fixtures/${file}"));
+        $content = file_get_contents(resource_path("fixtures/{$file}"));
 
-        return UploadedFile::fake()->createWithContent("${file}", $content);
+        return UploadedFile::fake()->createWithContent("{$file}", $content);
     }
 }

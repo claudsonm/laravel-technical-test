@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Person;
-use Illuminate\Http\Request;
 use App\Http\Resources\PersonResource;
+use App\Person;
 
 class PersonController extends Controller
 {
@@ -22,7 +21,6 @@ class PersonController extends Controller
     /**
      * Display the specified person.
      *
-     * @param  Person  $person
      * @return PersonResource
      */
     public function show(Person $person)

@@ -23,12 +23,12 @@ class ImportFilesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  ImportFilesRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ImportFilesRequest $request)
     {
         $file = $request->file('document');
+
         try {
             $content = $this->parseXml($file);
             $handler = $this->getHandlerFor($content);
@@ -51,7 +51,9 @@ class ImportFilesController extends Controller
      * Parse the given XML file into a instance of SimpleXMLElement.
      *
      * @param $file
+     *
      * @throws ParserException
+     *
      * @return SimpleXMLElement
      */
     protected function parseXml($file)
@@ -69,14 +71,11 @@ class ImportFilesController extends Controller
 
     /**
      * Get the handler namespace for the given XML based on the root element.
-     *
-     * @param  SimpleXMLElement  $xml
-     * @return string
      */
     protected function getHandlerFor(SimpleXMLElement $xml): string
     {
         $class = Str::studly($xml->getName()).'XmlHandler';
 
-        return "App\\Handlers\\${class}";
+        return "App\\Handlers\\{$class}";
     }
 }

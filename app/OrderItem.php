@@ -26,8 +26,7 @@ class OrderItem extends Model
     /**
      * Set the item price in cents.
      *
-     * @param  string  $value
-     * @return void
+     * @param float|int $value
      */
     public function setPriceAttribute($value)
     {
@@ -41,6 +40,6 @@ class OrderItem extends Model
      */
     public function getFloatPriceAttribute()
     {
-        return floatval($this->price / 100);
+        return (float) ($this->price / 100);
     }
 }

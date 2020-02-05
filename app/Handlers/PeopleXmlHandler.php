@@ -37,7 +37,7 @@ class PeopleXmlHandler extends Handler
         return $this;
     }
 
-    public function getOutput() : array
+    public function getOutput(): array
     {
         $message = 'File processed: '.$this->successCount.' new persons imported and '.$this->errorCount.' persons with error.';
         $level = $this->errorCount > 0 ? 'warning' : 'success';

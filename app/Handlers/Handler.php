@@ -23,8 +23,6 @@ abstract class Handler
     /**
      * Returns an array where the first index is the output message and the
      * second index is the severity level for the message.
-     *
-     * @return array
      */
-    abstract public function getOutput() : array;
+    abstract public function getOutput(): array;
 }
