@@ -2,6 +2,8 @@
 
 ## Installing the Project
 
+### Using Docker
+
 ````shell script
 git clone https://github.com/claudsonm/laravel-technical-test.git && cd laravel-technical-test
 cp .env.example .env
@@ -20,6 +22,17 @@ docker-compose exec app php artisan db:seed --class=PassportTableSeeder
 
 # open http://127.0.0.1:8000
 ````
+
+### Using the built-in server
+
+Nice if you already have a local environment setup with PHP 7.4 and MySQL Server ^5.7.
+In this case, just run:
+
+```shell script
+cp .env.example .env # Update your local variables
+composer install
+php artisan serve
+```
 
 ## API Documentation
 
