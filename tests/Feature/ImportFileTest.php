@@ -14,6 +14,13 @@ class ImportFileTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake();
+    }
+
     /** @test */
     public function it_requires_a_document()
     {
@@ -23,7 +30,6 @@ class ImportFileTest extends TestCase
     /** @test */
     public function the_document_must_be_a_xml()
     {
-        Storage::fake();
         $pdf = UploadedFile::fake()->create('dummy.pdf');
 
         $this->post('files', ['document' => $pdf])
@@ -31,9 +37,19 @@ class ImportFileTest extends TestCase
     }
 
     /** @test */
+    public function a_valid_xml_containing_unrecognized_values_returns_an_error()
+    {
+        $content = file_get_contents(resource_path('fixtures/unrecognized.xml'));
+        $badXml = UploadedFile::fake()->createWithContent('unrecognized.xml', $content);
+
+        $this->post('files', ['document' => $badXml])
+            ->assertSessionHas('flash_notification.0.level', 'danger')
+            ->assertSessionHas('flash_notification.0.message', "There are no handlers for the given file.");
+    }
+
+    /** @test */
     public function it_returns_an_error_if_the_xml_is_invalid()
     {
-        Storage::fake();
         $content = file_get_contents(resource_path('fixtures/bad_shiporders.xml'));
         $badXml = UploadedFile::fake()->createWithContent('bad_shiporders.xml', $content);
 
@@ -45,7 +61,6 @@ class ImportFileTest extends TestCase
     /** @test */
     public function it_imports_successfully_an_valid_file_person_file()
     {
-        Storage::fake();
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'success')
             ->assertSessionHas('flash_notification.0.message', "File processed: 3 new persons imported and 0 persons with error.");
@@ -63,10 +78,9 @@ class ImportFileTest extends TestCase
     /** @test */
     public function a_file_already_imported_wont_make_any_changes()
     {
-        Storage::fake();
         $this->performPersonFileUpload();
         flash()->clear();
-        
+
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'warning')
             ->assertSessionHas('flash_notification.0.message', "File processed: 0 new persons imported and 3 persons with error.");
