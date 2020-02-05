@@ -34,7 +34,7 @@
 			<quantity>45</quantity>
 			<price>13.45</price>
 		  </item>
-	  </items>
+	  <items>
 	</shiporder>
 	<shiporder>
 	  <orderid>3</orderid>
@@ -58,6 +58,6 @@
 			<quantity>2</quantity>
 			<price>77.12</price>
 		  </item>
-	  </items>
+	  <items>
 	</shiporder>
 </shiporders>

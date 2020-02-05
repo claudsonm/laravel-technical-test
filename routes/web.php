@@ -17,7 +17,3 @@ Route::get('/', function () {
 
 Route::get('files/new', 'ImportFilesController@create');
 Route::post('files', 'ImportFilesController@store')->name('file.import');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
