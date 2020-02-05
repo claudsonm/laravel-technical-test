@@ -51,7 +51,7 @@ class ImportFileTest extends TestCase
     }
 
     /** @test */
-    public function it_imports_successfully_an_valid_person_file()
+    public function it_imports_successfully_a_valid_person_file()
     {
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'success')
@@ -81,7 +81,7 @@ class ImportFileTest extends TestCase
     }
 
     /** @test */
-    public function it_imports_successfully_an_valid_orders_file()
+    public function it_imports_successfully_a_valid_orders_file()
     {
         create(Person::class, [], 3);
         $this->performOrdersFileUpload()
