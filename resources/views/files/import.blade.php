@@ -10,7 +10,7 @@
                     <div class="card-body">
                         @include('flash::message')
 
-                        <form method="POST" action="{{ route('file.import') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('files.store') }}" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group row">

@@ -4,7 +4,7 @@ namespace App\Handlers;
 
 use App\Person;
 
-class PersonXmlHandler extends Handler
+class PeopleXmlHandler extends Handler
 {
     protected int $successCount = 0;
 
@@ -12,15 +12,14 @@ class PersonXmlHandler extends Handler
 
     public function handle(): Handler
     {
-        foreach ($this->content['person'] as $pendingPerson) {
+        foreach ($this->content->children() as $pendingPerson) {
             try {
                 $person = Person::create([
-                    'id' => $pendingPerson['personid'],
-                    'name' => $pendingPerson['personname'],
+                    'id' => $pendingPerson->personid,
+                    'name' => $pendingPerson->personname,
                 ]);
-                $numbers = $this->getPhonesFrom($pendingPerson);
 
-                foreach ($numbers as $number) {
+                foreach ($pendingPerson->phones->children() as $number) {
                     $person->phones()->create(['number' => $number]);
                 }
 
@@ -31,20 +30,6 @@ class PersonXmlHandler extends Handler
         }
 
         return $this;
-    }
-
-    /**
-     * @param string|array $person
-     *
-     * @return array
-     */
-    protected function getPhonesFrom($person)
-    {
-        if (is_array($phones = $person['phones']['phone'])) {
-            return $phones;
-        }
-
-        return [$phones];
     }
 
     public function getOutput() : array

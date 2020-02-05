@@ -2,11 +2,13 @@
 
 namespace App\Handlers;
 
+use SimpleXMLElement;
+
 abstract class Handler
 {
-    protected array $content;
+    protected SimpleXMLElement $content;
 
-    public function __construct(array $content)
+    public function __construct(SimpleXMLElement $content)
     {
         $this->content = $content;
     }

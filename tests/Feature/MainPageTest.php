@@ -10,13 +10,13 @@ class MainPageTest extends TestCase
     public function access_to_the_root_is_redirect_to_the_import_page()
     {
         $this->get('/')
-            ->assertRedirect('files/new');
+            ->assertRedirect('files/create');
     }
 
     /** @test */
     public function it_renders_the_form_correctly()
     {
-        $this->get('files/new')
+        $this->get('files/create')
             ->assertSee('Import a new file')
             ->assertSee('Process');
     }

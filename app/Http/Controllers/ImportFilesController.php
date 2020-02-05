@@ -7,6 +7,7 @@ use App\Http\Requests\ImportFilesRequest;
 use App\Parsers\Parser;
 use Exception;
 use Illuminate\Support\Str;
+use SimpleXMLElement;
 
 class ImportFilesController extends Controller
 {
@@ -30,10 +31,9 @@ class ImportFilesController extends Controller
     {
         $file = $request->file('document');
         try {
-            $content = $this->getXmlAsArray($file);
-            $baseName = Str::studly(array_key_first($content)).'XmlHandler';
-            if (class_exists($handlerClass = "App\\Handlers\\${baseName}")) {
-                [$message, $level] = (new $handlerClass($content))->handle()->getOutput();
+            $content = $this->parseXml($file);
+            if (class_exists($class = $this->getHandlerFor($content))) {
+                [$message, $level] = (new $class($content))->handle()->getOutput();
                 flash($message)->{$level}();
 
                 return redirect()->back();
@@ -49,11 +49,10 @@ class ImportFilesController extends Controller
 
     /**
      * @param $file
-     *
      * @throws ParserException
-     * @return array
+     * @return SimpleXMLElement
      */
-    protected function getXmlAsArray($file): array
+    protected function parseXml($file)
     {
         libxml_use_internal_errors(true);
         $xml = simplexml_load_string(file_get_contents($file));
@@ -62,11 +61,18 @@ class ImportFilesController extends Controller
 
             throw new ParserException("The XML is invalid: {$firstError}");
         }
-        $array = json_decode(json_encode($xml), true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new ParserException('We could not parse the given file.');
-        }
 
-        return $array;
+        return $xml;
+    }
+
+    /**
+     * @param  SimpleXMLElement  $xml
+     * @return string
+     */
+    protected function getHandlerFor(SimpleXMLElement $xml): string
+    {
+        $class = Str::studly($xml->getName()).'XmlHandler';
+
+        return "App\\Handlers\\${class}";
     }
 }

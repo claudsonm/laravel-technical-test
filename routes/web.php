@@ -12,8 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('files/new');
+    return redirect('files/create');
 });
 
-Route::get('files/new', 'ImportFilesController@create');
-Route::post('files', 'ImportFilesController@store')->name('file.import');
+Route::resource('files', 'ImportFilesController')->only(['create', 'store']);
