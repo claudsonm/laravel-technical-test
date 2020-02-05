@@ -31,16 +31,16 @@ class OrderItem extends Model
      */
     public function setPriceAttribute($value)
     {
-        $this->attributes['price'] = is_float($value) ? $value * 100 : $value;
+        $this->attributes['price'] = $value * 100;
     }
 
     /**
      * Get the item price as float.
      *
-     * @return float|int
+     * @return float
      */
     public function getFloatPriceAttribute()
     {
-        return $this->price / 100;
+        return floatval($this->price / 100);
     }
 }
