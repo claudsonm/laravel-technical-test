@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Phone;
+use App\Order;
 use App\Person;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -13,13 +14,6 @@ use Tests\TestCase;
 class ImportFileTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake();
-    }
 
     /** @test */
     public function it_requires_a_document()
@@ -39,10 +33,9 @@ class ImportFileTest extends TestCase
     /** @test */
     public function a_valid_xml_containing_unrecognized_values_returns_an_error()
     {
-        $content = file_get_contents(resource_path('fixtures/unrecognized.xml'));
-        $badXml = UploadedFile::fake()->createWithContent('unrecognized.xml', $content);
+        $unrecognizedXml = $this->makeDummyUploadedFileFrom('unrecognized.xml');
 
-        $this->post('files', ['document' => $badXml])
+        $this->post('files', ['document' => $unrecognizedXml])
             ->assertSessionHas('flash_notification.0.level', 'danger')
             ->assertSessionHas('flash_notification.0.message', "There are no handlers for the given file.");
     }
@@ -50,8 +43,7 @@ class ImportFileTest extends TestCase
     /** @test */
     public function it_returns_an_error_if_the_xml_is_invalid()
     {
-        $content = file_get_contents(resource_path('fixtures/bad_shiporders.xml'));
-        $badXml = UploadedFile::fake()->createWithContent('bad_shiporders.xml', $content);
+        $badXml = $this->makeDummyUploadedFileFrom('bad_shiporders.xml');
 
         $this->post('files', ['document' => $badXml])
             ->assertSessionHas('flash_notification.0.level', 'danger')
@@ -59,7 +51,7 @@ class ImportFileTest extends TestCase
     }
 
     /** @test */
-    public function it_imports_successfully_an_valid_file_person_file()
+    public function it_imports_successfully_an_valid_person_file()
     {
         $this->performPersonFileUpload()
             ->assertSessionHas('flash_notification.0.level', 'success')
@@ -76,7 +68,7 @@ class ImportFileTest extends TestCase
     }
 
     /** @test */
-    public function a_file_already_imported_wont_make_any_changes()
+    public function a_person_file_already_imported_wont_make_any_changes()
     {
         $this->performPersonFileUpload();
         flash()->clear();
@@ -88,14 +80,50 @@ class ImportFileTest extends TestCase
         $this->assertEquals(5, Phone::count());
     }
 
+    /** @test */
+    public function it_imports_successfully_an_valid_orders_file()
+    {
+        create(Person::class, [], 3);
+        $this->performOrdersFileUpload()
+            ->assertSessionHas('flash_notification.0.level', 'success')
+            ->assertSessionHas('flash_notification.0.message', "File processed: 3 new orders imported and 0 orders with errors.");
+
+        $this->assertDatabaseHas('orders', ['id' => 1, 'destination' => 'Name 1', 'person_id' => 1]);
+        $this->assertDatabaseHas('orders', ['id' => 2, 'destination' => 'Name 2', 'person_id' => 2]);
+        $this->assertDatabaseHas('orders', ['id' => 3, 'destination' => 'Name 3', 'person_id' => 3]);
+        $this->assertEquals(1, Order::find(1)->items()->count());
+        $this->assertEquals(1, Order::find(2)->items()->count());
+        $this->assertEquals(2, Order::find(3)->items()->count());
+    }
+
     /**
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
     protected function performPersonFileUpload(): \Illuminate\Foundation\Testing\TestResponse
     {
-        $content = file_get_contents(resource_path('fixtures/people.xml'));
-        $people = UploadedFile::fake()->createWithContent('people.xml', $content);
+        $people = $this->makeDummyUploadedFileFrom('people.xml');
 
         return $this->post('files', ['document' => $people]);
+    }
+
+    /**
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    protected function performOrdersFileUpload(): \Illuminate\Foundation\Testing\TestResponse
+    {
+        $orders = $this->makeDummyUploadedFileFrom('shiporders.xml');
+
+        return $this->post('files', ['document' => $orders]);
+    }
+
+    /**
+     * @param  string  $file The filename located at resources/fixtures folder.
+     * @return \Illuminate\Http\Testing\File
+     */
+    protected function makeDummyUploadedFileFrom(string $file): \Illuminate\Http\Testing\File
+    {
+        $content = file_get_contents(resource_path("fixtures/${file}"));
+
+        return UploadedFile::fake()->createWithContent("${file}", $content);
     }
 }
