@@ -15,7 +15,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return OrderResource::collection(Order::paginate());
+        return OrderResource::collection(Order::with(['items', 'person'])->paginate());
     }
 
     /**
@@ -25,6 +25,6 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return OrderResource::make($order);
+        return OrderResource::make($order->load(['items', 'person']));
     }
 }

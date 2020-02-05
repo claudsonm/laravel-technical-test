@@ -10,6 +10,11 @@ class PeopleXmlHandler extends Handler
 
     protected int $errorCount = 0;
 
+    /**
+     * Handles the XML content processing persisting into the database.
+     *
+     * @return $this
+     */
     public function handle(): Handler
     {
         foreach ($this->content->children() as $pendingPerson) {

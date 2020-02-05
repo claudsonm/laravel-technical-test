@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ParserException;
 use App\Http\Requests\ImportFilesRequest;
-use App\Parsers\Parser;
 use Exception;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
@@ -24,7 +23,7 @@ class ImportFilesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @throws ParserException
+     * @param  ImportFilesRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ImportFilesRequest $request)
@@ -32,8 +31,9 @@ class ImportFilesController extends Controller
         $file = $request->file('document');
         try {
             $content = $this->parseXml($file);
-            if (class_exists($class = $this->getHandlerFor($content))) {
-                [$message, $level] = (new $class($content))->handle()->getOutput();
+            $handler = $this->getHandlerFor($content);
+            if (class_exists($handler)) {
+                [$message, $level] = (new $handler($content))->handle()->getOutput();
                 flash($message)->{$level}();
 
                 return redirect()->back();
@@ -48,6 +48,8 @@ class ImportFilesController extends Controller
     }
 
     /**
+     * Parse the given XML file into a instance of SimpleXMLElement.
+     *
      * @param $file
      * @throws ParserException
      * @return SimpleXMLElement
@@ -66,6 +68,8 @@ class ImportFilesController extends Controller
     }
 
     /**
+     * Get the handler namespace for the given XML based on the root element.
+     *
      * @param  SimpleXMLElement  $xml
      * @return string
      */

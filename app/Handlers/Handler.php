@@ -14,7 +14,7 @@ abstract class Handler
     }
 
     /**
-     * Handle the XML content persisting into the database.
+     * Handles the XML content processing persisting into the database.
      *
      * @return $this
      */

@@ -11,6 +11,11 @@ class ShipordersXmlHandler extends Handler
 
     protected int $errorCount = 0;
 
+    /**
+     * Handles the XML content processing persisting into the database.
+     *
+     * @return $this
+     */
     public function handle(): Handler
     {
         foreach ($this->content->children() as $pendingOrder) {
@@ -23,6 +28,7 @@ class ShipordersXmlHandler extends Handler
                     'country' => $pendingOrder->shipto->country,
                     'person_id' => $pendingOrder->orderperson,
                 ]);
+
                 foreach ($pendingOrder->items->children() as $item) {
                     $order->items()->create([
                         'name' => $item->title,
@@ -31,6 +37,7 @@ class ShipordersXmlHandler extends Handler
                         'price' => (float) $item->price,
                     ]);
                 }
+
                 $this->successCount++;
             } catch (\Exception $e) {
                 $this->errorCount++;
